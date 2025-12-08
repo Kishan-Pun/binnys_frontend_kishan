@@ -5,7 +5,7 @@ import {
   Paper,
   TextField,
   Typography,
-  InputAdornment
+  InputAdornment,
 } from "@mui/material";
 import EmailIcon from "@mui/icons-material/Email";
 import LockIcon from "@mui/icons-material/Lock";
@@ -14,35 +14,38 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
+import { useSnackbar } from "../../context/SnackbarContext.jsx";
 
 const loginSchema = z.object({
   email: z.string().email("Enter a valid email"),
-  password: z.string().min(1, "Password is required")
+  password: z.string().min(1, "Password is required"),
 });
 
 const LoginPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { showSnackbar } = useSnackbar();
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting }
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
-      password: ""
-    }
+      password: "",
+    },
   });
 
   const onSubmit = async (data) => {
     try {
       await login(data.email, data.password);
       navigate("/");
+      showSnackbar("Logged in successfully", "success");
     } catch (err) {
       console.error(err);
-      alert(err?.response?.data?.message || "Login failed");
+      showSnackbar(msg, "error");
     }
   };
 
@@ -53,7 +56,7 @@ const LoginPage = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        py: 4
+        py: 4,
       }}
     >
       <Paper
@@ -66,7 +69,7 @@ const LoginPage = () => {
           background:
             "radial-gradient(circle at top left, rgba(37,99,235,0.18), transparent 55%), rgba(15,23,42,0.96)",
           border: "1px solid rgba(51,65,85,0.9)",
-          boxShadow: "0 20px 50px rgba(15,23,42,0.9)"
+          boxShadow: "0 20px 50px rgba(15,23,42,0.9)",
         }}
       >
         <Typography
@@ -74,7 +77,7 @@ const LoginPage = () => {
           sx={{
             fontWeight: 700,
             mb: 0.5,
-            color: "rgb(248,250,252)"
+            color: "rgb(248,250,252)",
           }}
         >
           Welcome back
@@ -83,7 +86,7 @@ const LoginPage = () => {
           variant="body2"
           sx={{
             mb: 3,
-            color: "rgba(148,163,184,0.9)"
+            color: "rgba(148,163,184,0.9)",
           }}
         >
           Sign in to manage movies or explore the catalog.
@@ -101,9 +104,11 @@ const LoginPage = () => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <EmailIcon sx={{ fontSize: 20, color: "rgba(148,163,184,0.9)" }} />
+                  <EmailIcon
+                    sx={{ fontSize: 20, color: "rgba(148,163,184,0.9)" }}
+                  />
                 </InputAdornment>
-              )
+              ),
             }}
           />
 
@@ -119,9 +124,11 @@ const LoginPage = () => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <LockIcon sx={{ fontSize: 20, color: "rgba(148,163,184,0.9)" }} />
+                  <LockIcon
+                    sx={{ fontSize: 20, color: "rgba(148,163,184,0.9)" }}
+                  />
                 </InputAdornment>
-              )
+              ),
             }}
           />
 
@@ -141,8 +148,8 @@ const LoginPage = () => {
               "&:hover": {
                 background:
                   "linear-gradient(135deg, rgba(59,130,246,1), rgba(8,145,178,1))",
-                boxShadow: "0 18px 40px rgba(37,99,235,1)"
-              }
+                boxShadow: "0 18px 40px rgba(37,99,235,1)",
+              },
             }}
             disabled={isSubmitting}
           >

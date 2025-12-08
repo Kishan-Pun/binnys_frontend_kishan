@@ -10,6 +10,7 @@ import {
   Box,
 } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
+import { formatDuration } from "../../utils/formatDuration.js";
 
 const CARD_HEIGHT = 420; // ✅ SAME HEIGHT FOR ALL CARDS
 const IMAGE_HEIGHT = 240; // ✅ SAME IMAGE HEIGHT
@@ -26,6 +27,13 @@ const MovieCard = ({ movie }) => {
   } = movie;
 
   const year = releaseDate ? new Date(releaseDate).getFullYear() : null;
+
+  const formattedDuration =
+    typeof duration === "number"
+      ? Number.isInteger(duration)
+        ? duration
+        : duration.toFixed(1)
+      : "-";
 
   return (
     <Card
@@ -143,9 +151,9 @@ const MovieCard = ({ movie }) => {
                 {year && (
                   <Typography
                     variant="body2"
-                    sx={{ color: "rgba(148,163,184,0.9)" }}
+                    sx={{ color: "rgba(148, 163, 184, 0.9)", mt: 0.2 }}
                   >
-                    {year} • {duration || "-"} min
+                    {year} • {formatDuration(duration)}
                   </Typography>
                 )}
               </Box>

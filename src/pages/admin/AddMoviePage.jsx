@@ -3,24 +3,26 @@ import { Box, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import MovieForm from "../../components/movies/MovieForm.jsx";
 import movieApi from "../../api/movieApi.js";
+import { useSnackbar } from "../../context/SnackbarContext.jsx";
 
 const AddMoviePage = () => {
   const navigate = useNavigate();
+  const { showSnackbar } = useSnackbar();
 
   const handleCreate = async (payload) => {
     try {
       const res = await movieApi.createMovie(payload);
 
-      // backend with queue → likely returns message + jobId
-      alert(
-        res.data?.message ||
-          "Movie created (may be processed via queue)."
+      showSnackbar(
+        res.data?.message || "Movie created (queued for processing).",
+        "success"
       );
 
       navigate("/admin/movies");
     } catch (err) {
       console.error(err);
-      alert(err?.response?.data?.message || "Failed to create movie");
+      const msg = err?.response?.data?.message || "Failed to create movie";
+      showSnackbar(msg, "error");
     }
   };
 
@@ -31,7 +33,7 @@ const AddMoviePage = () => {
         sx={{
           fontWeight: 700,
           color: "rgb(248,250,252)",
-          mb: 0.5
+          mb: 0.5,
         }}
       >
         Add new movie

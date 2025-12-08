@@ -3,10 +3,12 @@ import { Box, Typography, Skeleton } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import MovieForm from "../../components/movies/MovieForm.jsx";
 import movieApi from "../../api/movieApi.js";
+import { useSnackbar } from "../../context/SnackbarContext.jsx";
 
 const EditMoviePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { showSnackbar } = useSnackbar();
 
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -18,7 +20,8 @@ const EditMoviePage = () => {
       setMovie(res.data);
     } catch (err) {
       console.error(err);
-      alert(err?.response?.data?.message || "Failed to load movie");
+      const msg = err?.response?.data?.message || "Failed to load movie";
+      showSnackbar(msg, "error");
       navigate("/admin/movies");
     } finally {
       setLoading(false);
@@ -33,11 +36,12 @@ const EditMoviePage = () => {
   const handleUpdate = async (payload) => {
     try {
       await movieApi.updateMovie(id, payload);
-      alert("Movie updated successfully");
+      showSnackbar("Movie updated successfully", "success");
       navigate("/admin/movies");
     } catch (err) {
       console.error(err);
-      alert(err?.response?.data?.message || "Failed to update movie");
+      const msg = err?.response?.data?.message || "Failed to update movie";
+      showSnackbar(msg, "error");
     }
   };
 
@@ -48,7 +52,7 @@ const EditMoviePage = () => {
         sx={{
           fontWeight: 700,
           color: "rgb(248,250,252)",
-          mb: 0.5
+          mb: 0.5,
         }}
       >
         Edit movie

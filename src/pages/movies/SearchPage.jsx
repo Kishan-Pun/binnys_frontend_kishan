@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import {
   Box,
-  Grid,
   Typography,
   TextField,
   InputAdornment,
   IconButton,
   Stack,
-  Skeleton
+  Skeleton,
 } from "@mui/material";
+import Grid from "@mui/material/Grid"; // ✅ use same Grid as HomePage
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import MovieCard from "../../components/movies/MovieCard.jsx";
@@ -40,7 +40,7 @@ const SearchPage = () => {
       const res = await movieApi.searchMovies({
         q,
         page: pageNumber,
-        limit: PAGE_SIZE
+        limit: PAGE_SIZE,
       });
 
       const { movies, page, totalPages } = res.data;
@@ -56,7 +56,6 @@ const SearchPage = () => {
     }
   };
 
-  // Trigger search when submittedQuery or page changes
   useEffect(() => {
     if (submittedQuery) {
       fetchSearchResults(submittedQuery, page);
@@ -90,7 +89,7 @@ const SearchPage = () => {
         minHeight: "calc(100vh - 80px)",
         py: 3,
         px: { xs: 0, sm: 1 },
-        background: "transparent"
+        background: "transparent",
       }}
     >
       <Box
@@ -100,9 +99,10 @@ const SearchPage = () => {
           py: { xs: 3, sm: 4 },
           background:
             "linear-gradient(145deg, rgba(15,23,42,0.96), rgba(15,23,42,0.92))",
-          boxShadow: "0 22px 50px rgba(15, 23, 42, 0.9)"
+          boxShadow: "0 22px 50px rgba(15, 23, 42, 0.9)",
         }}
       >
+        {/* Header + Search bar */}
         <Stack spacing={2} mb={3}>
           <Box>
             <Typography
@@ -111,7 +111,7 @@ const SearchPage = () => {
                 fontWeight: 700,
                 letterSpacing: 0.7,
                 color: "rgb(248, 250, 252)",
-                mb: 0.5
+                mb: 0.5,
               }}
             >
               Search Movies
@@ -142,12 +142,12 @@ const SearchPage = () => {
                   backgroundColor: "#020617",
                   color: "rgb(226,232,240)",
                   ".MuiOutlinedInput-notchedOutline": {
-                    borderColor: "rgba(148,163,184,0.6)"
+                    borderColor: "rgba(148,163,184,0.6)",
                   },
                   "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "rgba(148,163,184,0.9)"
-                  }
-                }
+                    borderColor: "rgba(148,163,184,0.9)",
+                  },
+                },
               }}
               InputProps={{
                 startAdornment: (
@@ -165,7 +165,7 @@ const SearchPage = () => {
                       <ClearIcon fontSize="small" />
                     </IconButton>
                   </InputAdornment>
-                ) : null
+                ) : null,
               }}
             />
           </Box>
@@ -182,15 +182,19 @@ const SearchPage = () => {
             variant="body2"
             sx={{ color: "rgba(148,163,184,0.9)", mb: 3 }}
           >
-            Start by typing a movie name (e.g. &quot;Inception&quot;, &quot;Godfather&quot;)
-            and press Enter to search.
+            Start by typing a movie name (e.g. &quot;Inception&quot;,
+            &quot;Godfather&quot;) and press Enter to search.
           </Typography>
         )}
 
+        {/* ✅ Same Grid pattern as HomePage */}
         <Grid container spacing={3}>
           {loading
             ? Array.from({ length: PAGE_SIZE }).map((_, idx) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={idx}>
+                <Grid
+                  key={idx}
+                  size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
+                >
                   <Skeleton
                     variant="rounded"
                     height={320}
@@ -199,7 +203,11 @@ const SearchPage = () => {
                 </Grid>
               ))
             : movies.map((movie) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={movie._id}>
+                <Grid
+                  key={movie._id}
+                  size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
+                  sx={{ display: "flex" }} // stretch card like HomePage
+                >
                   <MovieCard movie={movie} />
                 </Grid>
               ))}

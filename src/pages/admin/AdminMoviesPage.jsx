@@ -13,7 +13,7 @@ import {
   Paper,
   Skeleton,
   Button,
-  Tooltip
+  Tooltip,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -22,6 +22,8 @@ import movieApi from "../../api/movieApi.js";
 import PaginationControls from "../../components/common/PaginationControls.jsx";
 import ConfirmDialog from "../../components/common/ConfirmDialog.jsx";
 import { useNavigate } from "react-router-dom";
+import { useSnackbar } from "../../context/SnackbarContext.jsx";
+import { formatDuration } from "../../utils/formatDuration.js";
 
 const PAGE_SIZE = 10;
 
@@ -36,6 +38,7 @@ const AdminMoviesPage = () => {
   const [movieToDelete, setMovieToDelete] = useState(null);
 
   const navigate = useNavigate();
+  const { showSnackbar } = useSnackbar();
 
   const fetchMovies = async (pageNumber = 1) => {
     try {
@@ -44,7 +47,7 @@ const AdminMoviesPage = () => {
 
       const res = await movieApi.getMovies({
         page: pageNumber,
-        limit: PAGE_SIZE
+        limit: PAGE_SIZE,
       });
 
       const { movies, page, totalPages } = res.data;
@@ -98,10 +101,13 @@ const AdminMoviesPage = () => {
         setPage((prev) => prev - 1);
       }
 
+      showSnackbar(`"${movieToDelete.title}" deleted successfully`, "success");
+
       closeDeleteDialog();
     } catch (err) {
       console.error(err);
-      alert(err?.response?.data?.message || "Failed to delete movie");
+      const msg = err?.response?.data?.message || "Failed to delete movie";
+      showSnackbar(msg, "error");
       setDeletingId(null);
     }
   };
@@ -113,7 +119,7 @@ const AdminMoviesPage = () => {
     return d.toLocaleDateString("en-GB", {
       year: "numeric",
       month: "short",
-      day: "2-digit"
+      day: "2-digit",
     });
   };
 
@@ -134,15 +140,12 @@ const AdminMoviesPage = () => {
             sx={{
               fontWeight: 700,
               color: "rgb(248,250,252)",
-              mb: 0.5
+              mb: 0.5,
             }}
           >
             Movies
           </Typography>
-          <Typography
-            variant="body2"
-            sx={{ color: "rgba(148,163,184,0.9)" }}
-          >
+          <Typography variant="body2" sx={{ color: "rgba(148,163,184,0.9)" }}>
             View, edit, or delete movies from the catalog.
           </Typography>
         </Box>
@@ -160,8 +163,8 @@ const AdminMoviesPage = () => {
             "&:hover": {
               background:
                 "linear-gradient(135deg, rgba(59,130,246,1), rgba(8,145,178,1))",
-              boxShadow: "0 16px 35px rgba(37,99,235,1)"
-            }
+              boxShadow: "0 16px 35px rgba(37,99,235,1)",
+            },
           }}
           onClick={() => navigate("/admin/movies/new")}
         >
@@ -181,7 +184,7 @@ const AdminMoviesPage = () => {
           backgroundColor: "rgba(15,23,42,0.98)",
           borderRadius: 3,
           boxShadow: "0 18px 40px rgba(15,23,42,0.9)",
-          border: "1px solid rgba(51,65,85,0.9)"
+          border: "1px solid rgba(51,65,85,0.9)",
         }}
       >
         <Table>
@@ -192,7 +195,7 @@ const AdminMoviesPage = () => {
                   color: "rgba(148,163,184,0.9)",
                   fontSize: 13,
                   textTransform: "uppercase",
-                  borderBottomColor: "rgba(51,65,85,0.9)"
+                  borderBottomColor: "rgba(51,65,85,0.9)",
                 }}
               >
                 Title
@@ -202,7 +205,7 @@ const AdminMoviesPage = () => {
                   color: "rgba(148,163,184,0.9)",
                   fontSize: 13,
                   textTransform: "uppercase",
-                  borderBottomColor: "rgba(51,65,85,0.9)"
+                  borderBottomColor: "rgba(51,65,85,0.9)",
                 }}
               >
                 Rating
@@ -212,7 +215,7 @@ const AdminMoviesPage = () => {
                   color: "rgba(148,163,184,0.9)",
                   fontSize: 13,
                   textTransform: "uppercase",
-                  borderBottomColor: "rgba(51,65,85,0.9)"
+                  borderBottomColor: "rgba(51,65,85,0.9)",
                 }}
               >
                 Release date
@@ -222,7 +225,7 @@ const AdminMoviesPage = () => {
                   color: "rgba(148,163,184,0.9)",
                   fontSize: 13,
                   textTransform: "uppercase",
-                  borderBottomColor: "rgba(51,65,85,0.9)"
+                  borderBottomColor: "rgba(51,65,85,0.9)",
                 }}
               >
                 Duration
@@ -233,7 +236,7 @@ const AdminMoviesPage = () => {
                   color: "rgba(148,163,184,0.9)",
                   fontSize: 13,
                   textTransform: "uppercase",
-                  borderBottomColor: "rgba(51,65,85,0.9)"
+                  borderBottomColor: "rgba(51,65,85,0.9)",
                 }}
               >
                 Actions
@@ -259,14 +262,14 @@ const AdminMoviesPage = () => {
                     key={movie._id}
                     hover
                     sx={{
-                      "&:last-child td, &:last-child th": { borderBottom: 0 }
+                      "&:last-child td, &:last-child th": { borderBottom: 0 },
                     }}
                   >
                     <TableCell
                       sx={{
                         maxWidth: 260,
                         color: "rgb(226,232,240)",
-                        fontWeight: 500
+                        fontWeight: 500,
                       }}
                     >
                       {movie.title}
@@ -280,9 +283,7 @@ const AdminMoviesPage = () => {
                       {formatDate(movie.releaseDate)}
                     </TableCell>
                     <TableCell sx={{ color: "rgba(226,232,240,0.9)" }}>
-                      {typeof movie.duration === "number"
-                        ? `${movie.duration} min`
-                        : "-"}
+                      {formatDuration(movie.duration)}
                     </TableCell>
                     <TableCell align="right">
                       <Stack
@@ -297,8 +298,8 @@ const AdminMoviesPage = () => {
                             sx={{
                               color: "rgba(59,130,246,0.9)",
                               "&:hover": {
-                                backgroundColor: "rgba(37,99,235,0.15)"
-                              }
+                                backgroundColor: "rgba(37,99,235,0.15)",
+                              },
                             }}
                           >
                             <EditIcon fontSize="small" />
@@ -312,8 +313,8 @@ const AdminMoviesPage = () => {
                             sx={{
                               color: "rgba(248,113,113,0.9)",
                               "&:hover": {
-                                backgroundColor: "rgba(248,113,113,0.15)"
-                              }
+                                backgroundColor: "rgba(248,113,113,0.15)",
+                              },
                             }}
                           >
                             <DeleteIcon fontSize="small" />
@@ -331,7 +332,7 @@ const AdminMoviesPage = () => {
                   sx={{
                     textAlign: "center",
                     py: 4,
-                    color: "rgba(148,163,184,0.9)"
+                    color: "rgba(148,163,184,0.9)",
                   }}
                 >
                   No movies found. Try adding a new movie.
