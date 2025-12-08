@@ -55,7 +55,12 @@ const mapInitialToFormValues = (movie) => {
   };
 };
 
-const MovieForm = ({ initialData, onSubmit, submitLabel = "Save" }) => {
+const MovieForm = ({
+  initialData,
+  onSubmit,
+  onCancel,
+  submitLabel = "Save",
+}) => {
   const {
     register,
     handleSubmit,
@@ -156,12 +161,14 @@ const MovieForm = ({ initialData, onSubmit, submitLabel = "Save" }) => {
               return (
                 <DatePicker
                   label="Release date"
+                  views={["year", "month", "day"]} // ✅ enables Year + Month + Day
+                  openTo="year" // ✅ opens first with year selector
                   value={currentValue ? new Date(currentValue) : null}
                   onChange={(date) => {
                     if (!date || Number.isNaN(date.getTime())) {
                       field.onChange("");
                     } else {
-                      const isoString = date.toISOString().slice(0, 10); // "yyyy-mm-dd"
+                      const isoString = date.toISOString().slice(0, 10);
                       field.onChange(isoString);
                     }
                   }}
@@ -208,7 +215,7 @@ const MovieForm = ({ initialData, onSubmit, submitLabel = "Save" }) => {
           />
         </Box>
 
-        <Box sx={{ pt: 1 }}>
+        <Box sx={{ pt: 1, display: "flex", gap: 2 }}>
           <Button
             type="submit"
             variant="contained"
@@ -230,6 +237,28 @@ const MovieForm = ({ initialData, onSubmit, submitLabel = "Save" }) => {
             }}
           >
             {isSubmitting ? "Saving..." : submitLabel}
+          </Button>
+
+          {/* ✅ Cancel Button */}
+          <Button
+            type="button"
+            variant="outlined"
+            onClick={onCancel}
+            sx={{
+              textTransform: "none",
+              borderRadius: 999,
+              px: 3,
+              py: 1.2,
+              fontWeight: 600,
+              color: "rgba(148,163,184,1)",
+              borderColor: "rgba(148,163,184,0.6)",
+              "&:hover": {
+                borderColor: "rgba(148,163,184,1)",
+                backgroundColor: "rgba(148,163,184,0.08)",
+              },
+            }}
+          >
+            Cancel
           </Button>
         </Box>
 

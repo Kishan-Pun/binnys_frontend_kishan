@@ -77,6 +77,7 @@ const EditMoviePage = () => {
           initialData={movie}
           onSubmit={handleUpdate}
           submitLabel="Update movie"
+          onCancel={() => navigate("/admin/movies")}
         />
       )}
     </Box>

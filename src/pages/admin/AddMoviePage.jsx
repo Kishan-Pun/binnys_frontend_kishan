@@ -49,6 +49,7 @@ const AddMoviePage = () => {
         initialData={null}
         onSubmit={handleCreate}
         submitLabel="Create movie"
+        onCancel={() => navigate("/admin/movies")}
       />
     </Box>
   );
