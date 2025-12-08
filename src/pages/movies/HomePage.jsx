@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
-  Grid,
   Typography,
   FormControl,
   InputLabel,
@@ -10,6 +9,7 @@ import {
   Stack,
   Skeleton,
 } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import MovieCard from "../../components/movies/MovieCard.jsx";
 import PaginationControls from "../../components/common/PaginationControls.jsx";
 import movieApi from "../../api/movieApi.js";
@@ -238,7 +238,10 @@ const HomePage = () => {
         <Grid container spacing={3}>
           {loading
             ? Array.from({ length: PAGE_SIZE }).map((_, idx) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={idx}>
+                <Grid
+                  key={idx}
+                  size={{ xs: 12, sm: 6, md: 4, lg: 3 }} // ✅ new API
+                >
                   <Skeleton
                     variant="rounded"
                     height={320}
@@ -247,7 +250,11 @@ const HomePage = () => {
                 </Grid>
               ))
             : sortedMovies.map((movie) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={movie._id}>
+                <Grid
+                  key={movie._id}
+                  size={{ xs: 12, sm: 6, md: 4, lg: 3 }} // ✅ new API
+                  sx={{ display: "flex" }} // cards stretch in column
+                >
                   <MovieCard movie={movie} />
                 </Grid>
               ))}
