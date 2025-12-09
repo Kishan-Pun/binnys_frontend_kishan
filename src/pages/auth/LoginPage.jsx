@@ -13,7 +13,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "../../context/AuthContext.jsx";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom"; // ✅ added useLocation
 import { useSnackbar } from "../../context/SnackbarContext.jsx";
 
 const loginSchema = z.object({
@@ -24,6 +24,7 @@ const loginSchema = z.object({
 const LoginPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation(); // ✅
   const { showSnackbar } = useSnackbar();
 
   const {
@@ -40,11 +41,25 @@ const LoginPage = () => {
 
   const onSubmit = async (data) => {
     try {
-      await login(data.email, data.password);
-      navigate("/");
+      const user = await login(data.email, data.password);
+
+      const from = location.state?.from?.pathname;
+
+      if (from) {
+        navigate(from, { replace: true });
+      } else if (user?.role === "superadmin") {
+        navigate("/admin/users", { replace: true });
+      } else if (user?.role === "admin") {
+        navigate("/admin/movies", { replace: true });
+      } else {
+        navigate("/", { replace: true });
+      }
+
       showSnackbar("Logged in successfully", "success");
     } catch (err) {
       console.error(err);
+      const msg =
+        err?.response?.data?.message || err?.message || "Failed to login";
       showSnackbar(msg, "error");
     }
   };

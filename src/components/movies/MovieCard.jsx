@@ -10,13 +10,17 @@ import {
   Box,
 } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
+import { useNavigate } from "react-router-dom";
 import { formatDuration } from "../../utils/formatDuration.js";
 
-const CARD_HEIGHT = 420; // ✅ SAME HEIGHT FOR ALL CARDS
-const IMAGE_HEIGHT = 240; // ✅ SAME IMAGE HEIGHT
+const CARD_HEIGHT = 420;
+const IMAGE_HEIGHT = 240;
 
 const MovieCard = ({ movie }) => {
+  const navigate = useNavigate();
+
   const {
+    _id,
     title,
     description,
     rating,
@@ -28,17 +32,16 @@ const MovieCard = ({ movie }) => {
 
   const year = releaseDate ? new Date(releaseDate).getFullYear() : null;
 
-  const formattedDuration =
-    typeof duration === "number"
-      ? Number.isInteger(duration)
-        ? duration
-        : duration.toFixed(1)
-      : "-";
+  const handleClick = () => {
+    if (_id) {
+      navigate(`/movies/${_id}`);
+    }
+  };
 
   return (
     <Card
       sx={{
-        height: CARD_HEIGHT, // ✅ HARD LOCK
+        height: CARD_HEIGHT,
         width: "100%",
         display: "flex",
         flexDirection: "column",
@@ -61,6 +64,7 @@ const MovieCard = ({ movie }) => {
           display: "flex",
           flexDirection: "column",
         }}
+        onClick={handleClick}
       >
         {/* ✅ FIXED IMAGE HEIGHT */}
         <Box
@@ -113,7 +117,6 @@ const MovieCard = ({ movie }) => {
           )}
         </Box>
 
-        {/* ✅ FIXED CONTENT AREA */}
         <CardContent
           sx={{
             flex: 1,
@@ -123,7 +126,6 @@ const MovieCard = ({ movie }) => {
             p: 2,
           }}
         >
-          {/* TITLE + META */}
           <Box>
             <Stack
               direction="row"
@@ -141,8 +143,6 @@ const MovieCard = ({ movie }) => {
                     WebkitLineClamp: 1,
                     WebkitBoxOrient: "vertical",
                     overflow: "hidden",
-                    wordBreak: "break-word",
-                    overflowWrap: "anywhere",
                   }}
                 >
                   {title}
@@ -151,7 +151,7 @@ const MovieCard = ({ movie }) => {
                 {year && (
                   <Typography
                     variant="body2"
-                    sx={{ color: "rgba(148, 163, 184, 0.9)", mt: 0.2 }}
+                    sx={{ color: "rgba(148,163,184,0.9)" }}
                   >
                     {year} • {formatDuration(duration)}
                   </Typography>
