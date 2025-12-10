@@ -116,13 +116,13 @@ const SearchPage = () => {
             >
               Search Movies
             </Typography>
-            <Typography
+            {/* <Typography
               variant="body2"
               sx={{ color: "rgba(148, 163, 184, 0.9)" }}
             >
               Search by title or description. Results are fetched from the
               backend with pagination.
-            </Typography>
+            </Typography> */}
           </Box>
 
           <Box
