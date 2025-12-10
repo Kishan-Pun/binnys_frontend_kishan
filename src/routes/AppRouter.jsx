@@ -1,4 +1,3 @@
-import ProtectedRoute from "./ProtectedRoute.jsx";
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import PublicLayout from "../layouts/PublicLayout.jsx";
